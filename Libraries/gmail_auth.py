@@ -1,6 +1,5 @@
 import os.path
 
-import gspread
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -9,9 +8,9 @@ from Libraries.logger import get_logger
 
 logger = get_logger(__name__)
 
-# If modifying these scopes, delete the file token.json.
+# Se modificar esse SCOPES, delete o token.json
 SCOPES = [
-    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.modify",
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
 ]
@@ -36,18 +35,3 @@ def gmail_authenticate():
     service_drive = build("drive", "v3", credentials=creds)
 
     return service_gmail, service_sheet, service_drive
-
-
-def list_sheets():
-    _, _, service_drive = gmail_authenticate()
-
-    results = (
-        service_drive.files()
-        .list(pageSize=10, fields="nextPageToken, files(id, name)")
-        .execute()
-    )
-    items = results.get("files", [])
-
-    for sheet in items:
-        logger.info("=================================================================")
-        logger.info(sheet)

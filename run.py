@@ -1,29 +1,33 @@
-import time
-import asyncio
-import pdb
 from Libraries.logger import get_logger
-from Libraries.email_process import process_emails, update_google_sheet
+from Libraries.email_process import (
+    process_emails,
+    update_google_sheet,
+    create_label_if_not_exists,
+    apply_label,
+)
 import os
-
-
+from dotenv import load_dotenv
 
 logger = get_logger(__name__)
 
+load_dotenv()
 SHEET_ID = os.getenv("SHEET_ID")
 
+
 def run():
-    initial_time = time.time()
-
-    email_data = process_emails()
-
+    service, email_data = process_emails()
     logger.info(f"Emails processados: {len(email_data)}")
-    logger.info(email_data)
 
-    update_google_sheet(SHEET_ID, email_data)
+    label_inseridos_id = create_label_if_not_exists(service, "OK")
+    label_falha_id = create_label_if_not_exists(service, "FAIL")
 
-    actual_time = time.time()
-    exec_time = actual_time - initial_time
-    # logger.info(f"Tempo de execução: {exec_time:.2f} segundos")
+    for msg_id, data in email_data:
+        try:
+            update_google_sheet(SHEET_ID, [data])
+            apply_label(service, msg_id, label_inseridos_id)
+        except Exception as e:
+            logger.error(f"Erro ao inserir dados na planilha: {e}")
+            apply_label(service, msg_id, label_falha_id)
 
 
 run()

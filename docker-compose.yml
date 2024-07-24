@@ -6,8 +6,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/app
-    env_file:
-      - .env
+    environment:
+      SHEET_ID: "${SHEET_ID}"
     networks:
       - mailbot_network
 

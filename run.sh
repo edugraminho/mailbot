@@ -5,5 +5,5 @@ fi
 
 while true; do
     python3 run.py
-    sleep 5
+    sleep 300
 done
