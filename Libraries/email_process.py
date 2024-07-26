@@ -18,8 +18,7 @@ def extract_data(subject, sender):
     if not (id and processo):
         return None
 
-    comarca = comarca.group(1).strip().split("/")[0]
-    estado = comarca.split("/")[-1]
+    comarca = comarca.group(1).strip().split("/")
 
     sender_name = re.match(r"^(.*) <.*>$", sender)
     sender_name = sender_name.group(1).strip() if sender_name else sender[1:-1]
@@ -35,8 +34,8 @@ def extract_data(subject, sender):
         ),
         "ID": id.group(1),
         "SOLICITACAO": (solicitacao.group(1).strip() if solicitacao else None),
-        "COMARCA": comarca,
-        "ESTADO": estado,
+        "COMARCA": comarca[0],
+        "ESTADO": comarca[-1],
         "ORGAO": orgao.group(1).strip() if orgao else None,
         "PROCESSO": processo.group(1),
         "PARTE_1": partes.group(1).strip() if partes else None,
