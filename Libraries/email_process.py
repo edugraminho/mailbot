@@ -7,6 +7,9 @@ logger = get_logger(__name__)
 
 
 def extract_data(subject, sender):
+    if re.match(r"^(RES:|Re:)", subject, re.IGNORECASE):
+        return None
+
     id = re.search(r"ID (\d+)", subject)
     prazo = re.search(r"PRAZO: (\d{2}/\d{2}/\d{4})", subject)
     solicitacao = re.search(r"PRAZO: \d{2}/\d{2}/\d{4} - (.*?) -", subject)
@@ -14,9 +17,8 @@ def extract_data(subject, sender):
     processo = re.search(r"PROC (\d{7}-\d{2}.\d{4}.\d{1}.\d{2}.\d{4})", subject)
     comarca = re.search(r"- ([^-]+/[A-Z]{2})$", subject)
     orgao = re.search(r"PROC \d{7}-\d{2}.\d{4}.\d{1}.\d{2}.\d{4} – (.*?) -", subject)
-    res = re.search(r"RES:", subject)
 
-    if not (id and processo) or res:
+    if not (id and processo):
         return None
 
     comarca = comarca.group(1).strip().split("/")
