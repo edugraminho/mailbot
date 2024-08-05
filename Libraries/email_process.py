@@ -14,8 +14,9 @@ def extract_data(subject, sender):
     processo = re.search(r"PROC (\d{7}-\d{2}.\d{4}.\d{1}.\d{2}.\d{4})", subject)
     comarca = re.search(r"- ([^-]+/[A-Z]{2})$", subject)
     orgao = re.search(r"PROC \d{7}-\d{2}.\d{4}.\d{1}.\d{2}.\d{4} – (.*?) -", subject)
+    res = re.search(r"RES:", subject)
 
-    if not (id and processo):
+    if not (id and processo) or res:
         return None
 
     comarca = comarca.group(1).strip().split("/")
